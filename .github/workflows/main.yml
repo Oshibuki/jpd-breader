@@ -1,19 +1,66 @@
-name: CI
+name: Build and Release
 
 on:
-    push:
-        branches: [master]
-    pull_request:
-        branches: [master]
+  push:
+    branches:
+      - master  # 触发构建的分支是 master
+  pull_request:
+    branches:
+      - master  # 如果你也想在PR时触发
 
 jobs:
-    check:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v3
-            - name: Setup Node
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 16
-            - run: npm install
-            - run: npm run check
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'  # 或者你项目需要的Node.js版本
+
+    - name: Install dependencies
+      run: npm install  # 或者使用`yarn install`如果你的项目使用Yarn
+
+    - name: Install TypeScript and ts-node
+      run: |
+        npm install -g typescript
+        npm install -g ts-node
+
+    - name: Build project using ts-node
+      run: npm run build
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-files
+        path: |
+          ./dist  # 替换为你构建输出的目录
+          !./dist/**/*.map  # 如果你不想上传source map文件
+    
+    - name: List dist directory contents
+      run: ls -l dist  # 列出dist目录下的所有文件，包括权限、大小和时间戳
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v13.0.1  # 使用一个简单的标签名，例如 v1.0.0
+        release_name: Release v13.0.1  # 发布的名称，可以与标签名相同或不同
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/jpd-breader_undefined.zip  # 替换为你想要上传的文件路径
+        asset_name: jpd-breader.zip
+        asset_content_type: application/zip  # 根据你的文件类型设置正确的MIME类型
