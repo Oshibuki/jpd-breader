@@ -61,6 +61,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/jpd-breader_undefined.zip  # 替换为你想要上传的文件路径
+        asset_path: ./dist/jpd-breader_13.0.zip  # 替换为你想要上传的文件路径
         asset_name: jpd-breader.zip
         asset_content_type: application/zip  # 根据你的文件类型设置正确的MIME类型
