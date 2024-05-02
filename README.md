@@ -17,6 +17,7 @@ Maybe? Some parts of the interface are temporary and quite ugly, but otherwise i
 6.  In the file picker dialog, navigate to the folder you unpacked earlier. You should see a file called `manifest.json` inside the folder
 7.  Click select/open/choose to exit the dialog and load the extension
 8.  Continue with the [Initial Setup](#initial-setup) section
+9.  Add asbplayer intergrete builded files to release
 
 ### That sounds like a hassle. Why don't you upload the extension to the Chrome store instead?
 The Chrome store is not accepting new manifest v2 extensions, only manifest v3. But there are several problems with Manifest v3:
